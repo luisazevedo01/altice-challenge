@@ -1,12 +1,17 @@
 import "./style.css";
 import Letter from "./Letter";
 
+const params = new URL(document.location).searchParams;
+const id = params.get("id");
+
 document
   .getElementById("getUsers")
   .addEventListener("click", () => populateUsers());
 document
   .getElementById("getPosts")
   .addEventListener("click", () => populatePosts());
+
+if (id) document.getElementById("getUsers").remove();
 
 const populateUsers = async () => {
   const users = await Letter.get("/users");
@@ -37,9 +42,23 @@ const populateUsers = async () => {
 const populatePosts = async () => {
   const posts = await Letter.get("/posts");
 
-  if (posts) $("#json_posts").remove();
+  let filteredPosts = posts;
 
-  $("#posts").append(
-    '<div id="json_posts">' + JSON.stringify(posts) + "</div>"
-  );
+  if (id) filteredPosts = posts.filter((x) => x.userId === Number(id));
+
+  if (posts) $("#json_posts").remove();
+  if (posts) $("#posts_list").remove();
+
+  $("#posts").append('<ul id="posts_list"></ul>');
+
+  for (var i = 0; i < filteredPosts.length; i++) {
+    $("#posts" + "> ul").append(
+      "<li> <strong>" +
+        filteredPosts[i].title +
+        "</strong>" +
+        '<span style="float: right">' +
+        filteredPosts[i].body +
+        "</span></li>"
+    );
+  }
 };
