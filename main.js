@@ -37,7 +37,7 @@ const populateUsers = async () => {
 const populatePosts = async () => {
   const posts = await Letter.get("/posts");
 
-  if (posts) $("#posts").remove();
+  if (posts) $("#json_posts").remove();
 
   $("#posts").append(
     '<div id="json_posts">' + JSON.stringify(posts) + "</div>"
